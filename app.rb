@@ -8,7 +8,7 @@ class App
     return responde(404, ['NOT FOUND']) if env['PATH_INFO'] != '/time'
 
     params = parse_params(env['QUERY_STRING'])
-    return responde(400, ['Unknown params %w[params.keys]']) if params.keys.count != 1 || params.keys[0] != 'format'
+    return responde(400, ["Unknown params #{params.keys}"]) if params.keys.count != 1 || params.keys[0] != 'format'
 
     format_params = params['format'][0].split(',')
 
