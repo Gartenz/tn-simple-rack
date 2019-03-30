@@ -2,7 +2,6 @@ require 'cgi'
 require_relative 'time_format'
 
 class App
-
   DEFAULT_HEADERS = { 'Content-Type' => 'text/plain' }.freeze
 
   def call(env)
@@ -14,9 +13,8 @@ class App
     format_params = params['format'][0].split(',')
 
     responde(200, TimeFormatter.time(format_params))
-
   rescue TimeFormatter::FormatError => e
-    return responde(400, [e.message])
+    responde(400, [e.message])
   end
 
   private
@@ -32,6 +30,4 @@ class App
   def parse_params(params_string)
     CGI.parse(params_string)
   end
-
-
 end
