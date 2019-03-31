@@ -1,23 +1,31 @@
 class TimeFormatter
-  class FormatError < StandardError
+  TIME_FORMATS = { year: Time.now.year, month: Time.now.month, day: Time.now.day,
+                   hour: Time.now.hour, minute: Time.now.min, second: Time.now.sec }.freeze
+
+  attr_reader :value, :bad_params
+
+  def initialize(params)
+    @params = params.split(',')
+    @bad_params = []
+    @value = ''
   end
 
-  TIME_FORMATS = %w[year month day hour minute second].freeze
+  def parse
+    @bad_params = @params.map { |p| p unless TIME_FORMATS.key?(p.to_sym) }.compact
 
-  def self.time(params)
-    unpermitted_params = params.map { |param| param unless TIME_FORMATS.include?(param) }.compact
-    raise FormatError, "Unknown time format #{unpermitted_params}" if unpermitted_params.count > 0
+    return unless @bad_params.count.zero?
 
-    times = params.map do |param|
-      case param
-      when 'year' then Time.now.year
-      when 'month' then Time.now.month
-      when 'day' then Time.now.day
-      when 'hour' then Time.now.hour
-      when 'minute' then Time.now.min
-      when 'second' then Time.now.sec
-      end
+    time = @params.map do |param|
+      TIME_FORMATS[param.to_sym]
     end
-    [times.join('-')]
+    @value = time.join('-')
   end
+
+  def parsed?
+    !value.empty?
+  end
+
+  private
+
+  attr_writer :value, :bad_params
 end
